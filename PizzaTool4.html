@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Tool</title>
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+  <!-- Manifest embedded directly in HTML -->
+  <link rel="manifest" href="/manifest.json">
+ 
+</script>
+</html>
+<style>
+    * {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        text-align: center;
+        padding: 20px;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    body {
+        background-image: url("https://img.freepik.com/free-vector/kitchen-wooden-table-top-plank-wall-background_107791-14331.jpg?w=1380&t=st=1674845540~exp=1674846140~hmac=16208ef41fccff3cea15befd7ba885cae17dba5ca4c4502f447cfab45760565a");
+        background-color: rgb(227, 182, 131);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    h1 {
+        text-align: center;
+        color: rgba(221, 239, 255, 0.9);
+        border: solid 3px;
+        background-color: #61120E;
+        box-shadow: 2px 2px 50px;
+        display: block;
+        margin: 0 auto;
+        max-width: fit-content;
+    }
+
+    .ruota {
+        margin-top: 10px;
+        font-size: 25px;
+        display: block;
+    }
+
+    h3,
+    h2 {
+        margin: -10px;
+    }
+
+    .num {
+        color: maroon;
+        font-size: 50px;
+    }
+
+    .ciao {
+        margin-top: -40px;
+    }
+
+    button {
+        border: solid 3px;
+        background-color: #ECA442;
+        margin-bottom: 40px;
+        font-size: 20px;
+        padding-left: 40px;
+        padding-right: 40px;
+        color: white;
+        box-shadow: 2px 2px 20px;
+        cursor: pointer;
+        text-align: center;
+        display: inline-block;
+
+    }
+
+    button:hover {
+        background-color: rgb(158, 121, 25);
+    }
+
+    p {
+        color: rgb(0, 0, 0);
+        font-size: 30px solid;
+        background-color: rgba(240, 248, 255, 0.521);
+        margin-top: 20px auto;
+        margin: 0 auto;
+        max-width: fit-content;
+        padding: 3;
+    }
+
+    input {
+        background-color: #CA2521;
+        color: white;
+        margin-top: 0px;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 20px;
+        box-shadow: 2px 2px 5px;
+
+    }
+
+    input::placeholder {
+        color: white;
+    }
+
+    input:hover {
+        border: solid black;
+    }
+
+    input:active {
+        border-style: dotted black;
+    }
+
+    #piz {
+        max-block-size: 200px;
+    }
+
+    .pizza {
+        width: 200px;
+        transform-origin: center center;
+
+    }
+</style>
+</head>
+
+<body>
+    <h1> Ruota la pizza e calcola</h1>
+    <!-- <h3 class="ruota">Ruota la pizza e calcola </h3> -->
+    <h2 id="counter" class="num">2</h2>
+    <h3 class="ciao">PANETTI</h3>
+    <img class="pizza" src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+
+    <button id="button"><strong>Calcola</strong></button>
+    <!-- <strong>
+        <p id="1"></p>
+    </strong><br>
+    <strong>
+        <p id="2"></p>
+    </strong>
+    <strong>
+        <p id="3"></p>
+    </strong>
+    <strong>
+        <p id="4"></p>
+    </strong>
+    <strong>
+        <p id="5"></p>
+    </strong>
+    <strong>
+        <p id="6"></p>
+    </strong> -->
+
+    <script>
+
+
+        // rotazione
+
+        const pizza = document.querySelector('.pizza');
+        let angle = 0;
+        let counter = 2;
+        let isRotating = false;
+        const incrementCounter = (direction) => {
+            counter = Math.max(counter + direction, 1);
+            document.querySelector('#counter').innerHTML = counter;
+            
+        };
+
+        let isDragging = false;
+        let currentTouchPos = { x: 0, y: 0 };
+        let lastTouchPos = { x: 0, y: 0 };
+
+        document.addEventListener('touchstart', (event) => {
+            isDragging = true;
+            lastTouchPos.x = event.touches[0].clientY;
+            isRotating = true;
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+            isRotating = false;
+        });
+        document.addEventListener("wheel", function (event) {
+            if (isRotating) {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('touchmove', (event) => {
+            if (isRotating) {
+                event.preventDefault();
+            }
+            if (!isDragging) {
+                return;
+            }
+
+            currentTouchPos.y = event.touches[0].clientY;
+
+            const deltaY = currentTouchPos.y - lastTouchPos.y;
+            const direction = deltaY > 0 ? 1 : -1;
+            angle += deltaY;
+            angle %= 360;
+            pizza.style.transform = `rotate(${angle}deg)`;
+            lastTouchPos.y = currentTouchPos.y;
+
+            if (angle % 0.000000000000000000000001 === 0) {
+                incrementCounter(direction);
+
+            }
+
+            
+        });
+       
+
+        let panetti = counter;
+
+
+
+        //precode
+        let button = document.getElementById("button");
+        // let risultato1 = document.getElementById('1');
+        // let risultato2 = document.getElementById('2');
+        // let risultato3 = document.getElementById('3');
+        // let risultato4 = document.getElementById('4');
+        // let risultato5 = document.getElementById('5');
+        // let risultato6 = document.getElementById('6');
+
+
+        function impasto(panetti) {
+            let mix = (panetti * 250);
+            return mix;
+        }
+
+        function farina(panetti) {
+            let far = ((57 * (panetti * 250)) / 100);
+            return far;
+        }
+        function acqua(panetti) {
+            let acq = ((39.69 * (panetti * 250)) / 100);
+            return acq;
+        }
+        function sale(panetti) {
+            let sal = ((1.7 * (panetti * 250)) / 100);
+            return sal;
+        }
+        function olio(panetti) {
+            let ol = ((1.5 * (panetti * 250)) / 100);
+            return ol;
+        }
+        function lievito(panetti) {
+            let lie = ((0.11 * (panetti * 250)) / 100);
+            return lie;
+        }
+
+
+
+
+        button.addEventListener('click', () => {
+
+            // risultato1.innerHTML = "TOTALE IMPASTO: " + (Math.floor(impasto(panetti))) + " gr";
+            // risultato2.innerHTML = "Farina: " + (Math.floor(farina(panetti))) + " gr";
+            // risultato3.innerHTML = "Acqua: " + (Math.floor(acqua(panetti))) + " gr";
+            // risultato4.innerHTML = "Sale: " + (Math.floor(sale(panetti))) + " gr";
+            // risultato5.innerHTML = "Olio: " + (Math.floor(olio(panetti))) + " gr";
+            // risultato6.innerHTML = "Lievito: " + lievito(panetti) + " gr";
+
+			panetti = parseInt( document.getElementById('counter').innerHTML )
+            window.alert(`TOTALE IMPASTO per `+panetti+` panetti : ${(Math.floor(impasto(panetti)))} gr
+Farina: ${(Math.floor(farina(panetti)))} gr
+Acqua: ${(Math.floor(acqua(panetti)))} gr
+Sale: ${(Math.floor(sale(panetti)))} gr
+Olio: ${(Math.floor(olio(panetti)))} gr
+Lievito: ${lievito(panetti)} gr`);
+
+
+
+        });
+
+    </script>
+</body>
+
+</html>

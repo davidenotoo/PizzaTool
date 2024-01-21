@@ -1,0 +1,22 @@
+
+        {
+            "name": "Pizza Tool",
+            "short_name": "Pizza",
+            "description": "A progressive web app for pizza lovers.",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#e3b683",
+            "theme_color": "#61120E",
+            "icons": [
+                {
+                    "src": "favicon.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "favicon.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        }
