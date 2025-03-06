@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Tool</title>
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+
+<style>
+* {
+    font-family: system-ui;
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+body {
+    background-image: url("https://img.freepik.com/free-vector/kitchen-wooden-table-top-plank-wall-background_107791-14331.jpg?w=1380");
+    background-color: rgb(227, 182, 131);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    color: rgba(221, 239, 255, 0.9);
+    border: solid 3px;
+    background-color: #61120E;
+    box-shadow: 2px 2px 50px;
+}
+
+.num {
+    color: maroon;
+    font-size: 50px;
+}
+
+button {
+    border: solid 3px;
+    background-color: #ECA442;
+    font-size: 20px;
+    color: white;
+    box-shadow: 2px 2px 20px;
+    cursor: pointer;
+}
+
+.pizza {
+    width: 200px;
+    transform-origin: center;
+}
+</style>
+</head>
+
+<body>
+    <h1>Ruota la pizza e calcola</h1>
+    <h2 id="counter" class="num">2</h2>
+    <h3>PANETTI</h3>
+
+    <img class="pizza" src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+
+    <button id="button"><strong>Calcola</strong></button>
+
+<script>
+const pizza = document.querySelector('.pizza');
+const counterElem = document.querySelector('#counter');
+let counter = 2;
+let initialAngle = null;
+let lastAngle = 0;
+let accumulatedRotation = 0;
+
+const getAngle = (cx, cy, ex, ey) => Math.atan2(ey - cy, ex - cx) * (180 / Math.PI);
+
+pizza.addEventListener('touchstart', (event) => {
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const touch = event.touches[0];
+    initialAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
+});
+
+pizza.addEventListener('touchmove', (event) => {
+    event.preventDefault();
+
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const touch = event.touches[0];
+
+    const currentAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
+    const rotation = currentAngle - initialAngle;
+
+    accumulatedRotation += rotation;
+    pizza.style.transform = `rotate(${accumulatedRotation}deg)`;
+
+    if (Math.abs(accumulatedRotation - lastAngle) >= 360) {
+        const direction = accumulatedRotation > lastAngle ? 1 : -1;
+        counter = Math.max(1, counter + direction);
+        counterElem.innerHTML = counter;
+        lastAngle = accumulatedRotation;
+    }
+
+    initialAngle = currentAngle;
+});
+
+function impasto(panetti) { return panetti * 250; }
+function farina(panetti) { return (57 * panetti * 250) / 100; }
+function acqua(panetti) { return (39.69 * panetti * 250) / 100; }
+function sale(panetti) { return (1.7 * panetti * 250) / 100; }
+function olio(panetti) { return (1.5 * panetti * 250) / 100; }
+function lievito(panetti) { return (0.11 * panetti * 250) / 100; }
+
+button.addEventListener('click', () => {
+    const panetti = counter;
+    alert(`TOTALE IMPASTO per ${panetti} panetti: ${impasto(panetti)} gr\n`+
+    `Farina: ${Math.floor(farina(panetti))} gr\n`+
+    `Acqua: ${Math.floor(acqua(panetti))} gr\n`+
+    `Sale: ${Math.floor(sale(panetti))} gr\n`+
+    `Olio: ${Math.floor(olio(panetti))} gr\n`+
+    `Lievito: ${lievito(panetti)} gr`);
+});
+
+</script>
+</body>
+</html>
