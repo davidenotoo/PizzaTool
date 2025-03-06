@@ -2,11 +2,11 @@
 {
     "name": "Pizza Tool",
     "short_name": "Pizza",
-    "description": "Calcola l'impasto della PIZZA.",
+    "description": "A progressive web app for pizza lovers.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "none",
-    "theme_color": "none",
+    "background_color": "#b99b6",
+    "theme_color": "#b99b6",
     "icons": [
         {
             "src": "pizza.png",
