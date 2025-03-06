@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizza Tool</title>
-    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+    <link rel="icon" href="pizza.png">
+    <link rel="manifest" href="manifest.json">
 
 <style>
 * {
     font-family: system-ui;
     text-align: center;
-    padding: 20px;
-    border-radius: 20px;
+    border-radius: 40px;
     overflow: hidden;
 }
 
 body {
-    background-image: url("https://img.freepik.com/free-vector/kitchen-wooden-table-top-plank-wall-background_107791-14331.jpg?w=1380");
+    background-image: url("back.png") ;
     background-color: rgb(227, 182, 131);
     display: flex;
     flex-direction: column;
@@ -29,14 +29,20 @@ h1 {
     border: solid 3px;
     background-color: #61120E;
     box-shadow: 2px 2px 50px;
+    padding: 20px;
+
 }
 
 .num {
     color: maroon;
-    font-size: 50px;
+    font-size: 100px;
+    margin-top: -40px;
+    margin-bottom: -40px;
 }
 
 button {
+    margin-top: 50px;
+    padding: 20px;
     border: solid 3px;
     background-color: #ECA442;
     font-size: 20px;
@@ -46,7 +52,7 @@ button {
 }
 
 .pizza {
-    width: 200px;
+    width: 300px;
     transform-origin: center;
 }
 </style>
@@ -57,7 +63,7 @@ button {
     <h2 id="counter" class="num">2</h2>
     <h3>PANETTI</h3>
 
-    <img class="pizza" src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Deus_Pizza.png">
+    <img class="pizza" src="pizza.png">
 
     <button id="button"><strong>Calcola</strong></button>
 
@@ -93,7 +99,7 @@ pizza.addEventListener('touchmove', (event) => {
     accumulatedRotation += rotation;
     pizza.style.transform = `rotate(${accumulatedRotation}deg)`;
 
-    if (Math.abs(accumulatedRotation - lastAngle) >= 360) {
+    if (Math.abs(accumulatedRotation - lastAngle) >= 60) {
         const direction = accumulatedRotation > lastAngle ? 1 : -1;
         counter = Math.max(1, counter + direction);
         counterElem.innerHTML = counter;
