@@ -1,24 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Tool - Calcola Impasto Pizza</title>
-    <meta name="description" content="Calcola facilmente la quantità di impasto e ingredienti necessari per la tua pizza, ruotando semplicemente la pizza virtuale.">
-    
-    <!-- Open Graph per Facebook e WhatsApp -->
-    <meta property="og:title" content="Pizza Tool - Calcola Impasto Pizza">
-    <meta property="og:description" content="Ruota la pizza virtuale e scopri immediatamente le quantità perfette per l'impasto della tua pizza fatta in casa.">
-    <meta property="og:image" content="pizza.png">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://pizzatool.netlify.app/">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Pizza Tool - Calcola Impasto Pizza">
-    <meta name="twitter:description" content="Ruota la pizza e calcola rapidamente gli ingredienti necessari per una pizza perfetta.">
-    <meta name="twitter:image" content="pizza.png">
-
+    <title>Pizza Tool</title>
     <link rel="icon" href="pizza.png">
     <link rel="manifest" href="manifest.json">
 
@@ -26,7 +11,7 @@
 * {
     font-family: system-ui;
     text-align: center;
-    border-radius: 40px;
+    border-radius: 30px;
     overflow: hidden;
 }
 
@@ -67,8 +52,9 @@ button {
 }
 
 .pizza {
-    width: 200px;
+    width: 300px;
     transform-origin: center;
+
 }
 </style>
 </head>
@@ -79,9 +65,11 @@ button {
     <h3>PANETTI</h3>
 
     <img class="pizza" src="pizza.png">
-
-    <button id="button"><strong>Calcola</strong></button>
-
+   
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <button class="reset-button" onclick="resetCounter()">⟳</button>
+        <button id="button"><strong>Calcola</strong></button>
+    </div>
 <script>
 const pizza = document.querySelector('.pizza');
 const counterElem = document.querySelector('#counter');
@@ -140,6 +128,20 @@ button.addEventListener('click', () => {
     `Olio: ${Math.floor(olio(panetti))} gr\n`+
     `Lievito: ${lievito(panetti)} gr`);
 });
+
+
+function resetCounter() {
+    counter = 2;
+    accumulatedRotation = 0;
+    lastAngle = 0;
+    pizza.style.transition = 'transform 0.5s ease-in-out';
+    pizza.style.transform = `rotate(-720deg)`;
+    setTimeout(() => {
+        pizza.style.transition = '';
+        pizza.style.transform = 'rotate(0deg)';
+    }, 500);
+    counterElem.innerHTML = counter;
+}
 
 </script>
 </body>
