@@ -23,20 +23,19 @@
     <link rel="manifest" href="manifest.json">
 
 <style>
-* {
-    font-family: system-ui;
-    text-align: center;
-    border-radius: 30px;
-    overflow: hidden;
-}
-
+/* Stili generali puliti senza forzare overflow e border-radius ovunque */
 body {
-    background-image: url("back.png") ;
+    font-family: system-ui;
+    background-image: url("back.png");
     background-color: #b99b69;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding-bottom: 30px;
+    margin: 0;
+    min-height: 100vh;
+    text-align: center;
 }
 
 h1 {
@@ -45,18 +44,51 @@ h1 {
     background-color: rgba(97, 18, 14, 0.5);
     box-shadow: 2px 2px 50px;
     padding: 20px;
+    border-radius: 30px;
+    text-align: center;
+}
 
+h3 {
+    text-align: center;
 }
 
 .num {
     color: maroon;
-    font-size: 100px;
-    margin-top: -30px;
-    margin-bottom: -40px;
+    font-size: 80px;
+    margin-top: -10px;
+    margin-bottom: -20px;
+    text-align: center;
+}
+
+.weight-selector {
+    margin: 10px 0 20px 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+    border-radius: 30px;
+}
+
+.weight-selector label {
+    font-weight: bold;
+    color: maroon;
+    font-size: 16px;
+}
+
+.weight-selector select {
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: 2px solid maroon;
+    background-color: white;
+    color: maroon;
+    cursor: pointer;
 }
 
 button {
-    margin-top: 50px;
+    margin-top: 30px;
     padding: 20px;
     border: solid 3px;
     background-color: #ECA442;
@@ -64,30 +96,126 @@ button {
     color: white;
     box-shadow: 2px 2px 20px;
     cursor: pointer;
+    border-radius: 30px;
 }
 
 .pizza {
-    width: 300px;
+    width: 250px;
     transform-origin: center;
+}
 
+/* Stili per il Modale */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #2b2b2b;
+    color: white;
+    padding: 25px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: solid 3px #ECA442;
+    border-radius: 20px;
+    text-align: left;
+}
+
+.modal-content h3 {
+    color: #ECA442;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.modal-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.modal-content li {
+    padding: 8px 0;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-content li:last-child {
+    border-bottom: none;
+}
+
+.modal-close-btn {
+    display: block;
+    width: 100%;
+    background-color: #ECA442;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: none;
+    border-radius: 15px;
+    text-align: center;
 }
 </style>
 </head>
 
 <body>
     <h1>Ruota la pizza e calcola</h1>
+    
+    <div class="weight-selector">
+        <label for="panettoWeight">Peso panetto:</label>
+        <select id="panettoWeight">
+            <option value="150">150 gr</option>
+            <option value="180">180 gr</option>
+            <option value="200">200 gr</option>
+            <option value="250" selected>250 gr</option>
+        </select>
+    </div>
+
     <h2 id="counter" class="num">2</h2>
     <h3>PANETTI</h3>
 
     <img class="pizza" src="pizza.png">
    
-    <div style="display: flex; align-items: center; justify-content: center;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
         <button class="reset-button" onclick="resetCounter()">⟳</button>
         <button id="button"><strong>Calcola</strong></button>
     </div>
+
+    <!-- Schermata Modale -->
+    <div id="resultModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Risultato Impasto</h3>
+            <ul id="modalList">
+                <!-- Verrà popolato da JS -->
+            </ul>
+            <button class="modal-close-btn" onclick="closeModal()">Chiudi</button>
+        </div>
+    </div>
+
 <script>
 const pizza = document.querySelector('.pizza');
 const counterElem = document.querySelector('#counter');
+const weightSelect = document.querySelector('#panettoWeight');
+const modal = document.querySelector('#resultModal');
+const modalTitle = document.querySelector('#modalTitle');
+const modalList = document.querySelector('#modalList');
+
 let counter = 2;
 let initialAngle = null;
 let lastAngle = 0;
@@ -127,23 +255,45 @@ pizza.addEventListener('touchmove', (event) => {
     initialAngle = currentAngle;
 });
 
-function impasto(panetti) { return panetti * 250; }
-function farina(panetti) { return (57 * panetti * 250) / 100; }
-function acqua(panetti) { return (39.69 * panetti * 250) / 100; }
-function sale(panetti) { return (1.7 * panetti * 250) / 100; }
-function olio(panetti) { return (1.5 * panetti * 250) / 100; }
-function lievito(panetti) { return (0.11 * panetti * 250) / 100; }
+function getWeightPerPanetto() {
+    return parseFloat(weightSelect.value);
+}
+
+function impasto(panetti) { return panetti * getWeightPerPanetto(); }
+function farina(panetti) { return (57 * panetti * getWeightPerPanetto()) / 100; }
+function acqua(panetti) { return (39.69 * panetti * getWeightPerPanetto()) / 100; }
+function sale(panetti) { return (1.7 * panetti * getWeightPerPanetto()) / 100; }
+function olio(panetti) { return (1.5 * panetti * getWeightPerPanetto()) / 100; }
+function lievito(panetti) { return (0.11 * panetti * getWeightPerPanetto()) / 100; }
 
 button.addEventListener('click', () => {
     const panetti = counter;
-    alert(`TOTALE IMPASTO per ${panetti} panetti: ${impasto(panetti)} gr\n`+
-    `Farina: ${Math.floor(farina(panetti))} gr\n`+
-    `Acqua: ${Math.floor(acqua(panetti))} gr\n`+
-    `Sale: ${Math.floor(sale(panetti))} gr\n`+
-    `Olio: ${Math.floor(olio(panetti))} gr\n`+
-    `Lievito: ${lievito(panetti)} gr`);
+    const singleWeight = getWeightPerPanetto();
+    
+    modalTitle.innerHTML = `TOTALE IMPASTO: ${impasto(panetti)} gr`;
+    
+    modalList.innerHTML = `
+        <li><span>Panetti:</span> <strong>${panetti} da ${singleWeight}g</strong></li>
+        <li><span>Farina:</span> <strong>${Math.floor(farina(panetti))} gr</strong></li>
+        <li><span>Acqua:</span> <strong>${Math.floor(acqua(panetti))} gr</strong></li>
+        <li><span>Sale:</span> <strong>${Math.floor(sale(panetti))} gr</strong></li>
+        <li><span>Olio:</span> <strong>${Math.floor(olio(panetti))} gr</strong></li>
+        <li><span>Lievito:</span> <strong>${lievito(panetti).toFixed(3)} gr</strong></li>
+    `;
+
+    modal.style.display = 'flex';
 });
 
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+// Chiudi il modale cliccando fuori dalla finestrella
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
 
 function resetCounter() {
     counter = 2;
@@ -157,7 +307,6 @@ function resetCounter() {
     }, 500);
     counterElem.innerHTML = counter;
 }
-
 </script>
 </body>
 </html>

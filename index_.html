@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Tool</title>
+    <meta name="description" content="Calcola rapidamente l'impasto per la tua pizza ruotando la pizza virtuale.">
+    <!-- Open Graph per Facebook e WhatsApp -->
+    <meta property="og:title" content="Pizza Tool - Calcola Impasto Pizza">
+    <meta property="og:description" content="Ruota la pizza virtuale e scopri immediatamente le quantità perfette per l'impasto della tua pizza fatta in casa.">
+    <meta property="og:image" content="pizza.png">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pizza Tool - Calcola Impasto Pizza">
+    <meta name="twitter:description" content="Ruota la pizza e calcola rapidamente gli ingredienti necessari per una pizza perfetta.">
+    <meta name="twitter:image" content="pizza.png">
+
+    
+    <link rel="icon" href="pizza.png">
+    <link rel="manifest" href="manifest.json">
+
+<style>
+* {
+    font-family: system-ui;
+    text-align: center;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+body {
+    background-image: url("back.png") ;
+    background-color: #b99b69;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    color: rgba(221, 239, 255, 0.9);
+    border: solid 3px;
+    background-color: rgba(97, 18, 14, 0.5);
+    box-shadow: 2px 2px 50px;
+    padding: 20px;
+
+}
+
+.num {
+    color: maroon;
+    font-size: 100px;
+    margin-top: -30px;
+    margin-bottom: -40px;
+}
+
+button {
+    margin-top: 50px;
+    padding: 20px;
+    border: solid 3px;
+    background-color: #ECA442;
+    font-size: 20px;
+    color: white;
+    box-shadow: 2px 2px 20px;
+    cursor: pointer;
+}
+
+.pizza {
+    width: 300px;
+    transform-origin: center;
+
+}
+</style>
+</head>
+
+<body>
+    <h1>Ruota la pizza e calcola</h1>
+    <h2 id="counter" class="num">2</h2>
+    <h3>PANETTI</h3>
+
+    <img class="pizza" src="pizza.png">
+   
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <button class="reset-button" onclick="resetCounter()">⟳</button>
+        <button id="button"><strong>Calcola</strong></button>
+    </div>
+<script>
+const pizza = document.querySelector('.pizza');
+const counterElem = document.querySelector('#counter');
+let counter = 2;
+let initialAngle = null;
+let lastAngle = 0;
+let accumulatedRotation = 0;
+
+const getAngle = (cx, cy, ex, ey) => Math.atan2(ey - cy, ex - cx) * (180 / Math.PI);
+
+pizza.addEventListener('touchstart', (event) => {
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const touch = event.touches[0];
+    initialAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
+});
+
+pizza.addEventListener('touchmove', (event) => {
+    event.preventDefault();
+
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const touch = event.touches[0];
+
+    const currentAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
+    const rotation = currentAngle - initialAngle;
+
+    accumulatedRotation += rotation;
+    pizza.style.transform = `rotate(${accumulatedRotation}deg)`;
+
+    if (Math.abs(accumulatedRotation - lastAngle) >= 60) {
+        const direction = accumulatedRotation > lastAngle ? 1 : -1;
+        counter = Math.max(1, counter + direction);
+        counterElem.innerHTML = counter;
+        lastAngle = accumulatedRotation;
+    }
+
+    initialAngle = currentAngle;
+});
+
+function impasto(panetti) { return panetti * 250; }
+function farina(panetti) { return (57 * panetti * 250) / 100; }
+function acqua(panetti) { return (39.69 * panetti * 250) / 100; }
+function sale(panetti) { return (1.7 * panetti * 250) / 100; }
+function olio(panetti) { return (1.5 * panetti * 250) / 100; }
+function lievito(panetti) { return (0.11 * panetti * 250) / 100; }
+
+button.addEventListener('click', () => {
+    const panetti = counter;
+    alert(`TOTALE IMPASTO per ${panetti} panetti: ${impasto(panetti)} gr\n`+
+    `Farina: ${Math.floor(farina(panetti))} gr\n`+
+    `Acqua: ${Math.floor(acqua(panetti))} gr\n`+
+    `Sale: ${Math.floor(sale(panetti))} gr\n`+
+    `Olio: ${Math.floor(olio(panetti))} gr\n`+
+    `Lievito: ${lievito(panetti)} gr`);
+});
+
+
+function resetCounter() {
+    counter = 2;
+    accumulatedRotation = 0;
+    lastAngle = 0;
+    pizza.style.transition = 'transform 0.5s ease-in-out';
+    pizza.style.transform = `rotate(-720deg)`;
+    setTimeout(() => {
+        pizza.style.transition = '';
+        pizza.style.transform = 'rotate(0deg)';
+    }, 500);
+    counterElem.innerHTML = counter;
+}
+
+</script>
+</body>
+</html>
