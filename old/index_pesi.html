@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Tool</title>
+    <meta name="description" content="Calcola rapidamente l'impasto per la tua pizza ruotando la pizza virtuale.">
+    <!-- Open Graph per Facebook e WhatsApp -->
+    <meta property="og:title" content="Pizza Tool - Calcola Impasto Pizza">
+    <meta property="og:description" content="Ruota la pizza virtuale e scopri immediatamente le quantità perfette per l'impasto della tua pizza fatta in casa.">
+    <meta property="og:image" content="pizza.png">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pizza Tool - Calcola Impasto Pizza">
+    <meta name="twitter:description" content="Ruota la pizza e calcola rapidamente gli ingredienti necessari per una pizza perfetta.">
+    <meta name="twitter:image" content="pizza.png">
+
+    
+    <link rel="icon" href="pizza.png">
+    <link rel="manifest" href="manifest.json">
+
+<style>
+/* Stili generali puliti senza forzare overflow e border-radius ovunque */
+body {
+    font-family: system-ui;
+    background-image: url("back.png");
+    background-color: #b99b69;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 30px;
+    margin: 0;
+    min-height: 100vh;
+    text-align: center;
+}
+
+h1 {
+    color: rgba(221, 239, 255, 0.9);
+    border: solid 3px;
+    background-color: rgba(97, 18, 14, 0.5);
+    box-shadow: 2px 2px 50px;
+    padding: 20px;
+    border-radius: 30px;
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+}
+
+.num {
+    color: maroon;
+    font-size: 80px;
+    margin-top: -10px;
+    margin-bottom: -20px;
+    text-align: center;
+}
+
+.weight-selector {
+    margin: 10px 0 20px 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+    border-radius: 30px;
+}
+
+.weight-selector label {
+    font-weight: bold;
+    color: maroon;
+    font-size: 16px;
+}
+
+.weight-selector select {
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: 2px solid maroon;
+    background-color: white;
+    color: maroon;
+    cursor: pointer;
+}
+
+button {
+    margin-top: 30px;
+    padding: 20px;
+    border: solid 3px;
+    background-color: #ECA442;
+    font-size: 20px;
+    color: white;
+    box-shadow: 2px 2px 20px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+.pizza {
+    width: 250px;
+    transform-origin: center;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.pizza:active {
+    cursor: grabbing;
+}
+
+/* Stili per il Modale */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #2b2b2b;
+    color: white;
+    padding: 25px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: solid 3px #ECA442;
+    border-radius: 20px;
+    text-align: left;
+}
+
+.modal-content h3 {
+    color: #ECA442;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.modal-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.modal-content li {
+    padding: 8px 0;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-content li:last-child {
+    border-bottom: none;
+}
+
+.modal-close-btn {
+    display: block;
+    width: 100%;
+    background-color: #ECA442;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: none;
+    border-radius: 15px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+    <h1>Ruota la pizza e calcola</h1>
+    
+    <div class="weight-selector">
+        <label for="panettoWeight">Peso panetto:</label>
+        <select id="panettoWeight">
+            <option value="150">150 gr</option>
+            <option value="180">180 gr</option>
+            <option value="200">200 gr</option>
+            <option value="250" selected>250 gr</option>
+            <option value="260">260 gr</option>
+        </select>
+    </div>
+
+    <h2 id="counter" class="num">2</h2>
+    <h3>PANETTI</h3>
+
+    <img class="pizza" src="pizza.png" draggable="false">
+   
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+        <button class="reset-button" onclick="resetCounter()">⟳</button>
+        <button id="button"><strong>Calcola</strong></button>
+    </div>
+
+    <!-- Schermata Modale -->
+    <div id="resultModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Risultato Impasto</h3>
+            <ul id="modalList">
+                <!-- Verrà popolato da JS -->
+            </ul>
+            <button class="modal-close-btn" onclick="closeModal()">Chiudi</button>
+        </div>
+    </div>
+
+<script>
+const pizza = document.querySelector('.pizza');
+const counterElem = document.querySelector('#counter');
+const weightSelect = document.querySelector('#panettoWeight');
+const modal = document.querySelector('#resultModal');
+const modalTitle = document.querySelector('#modalTitle');
+const modalList = document.querySelector('#modalList');
+const button = document.querySelector('#button');
+
+let counter = 2;
+let initialAngle = null;
+let lastAngle = 0;
+let accumulatedRotation = 0;
+let isDragging = false;
+
+const getAngle = (cx, cy, ex, ey) => Math.atan2(ey - cy, ex - cx) * (180 / Math.PI);
+
+function startRotation(clientX, clientY) {
+    isDragging = true;
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    initialAngle = getAngle(cx, cy, clientX, clientY);
+}
+
+function updateRotation(clientX, clientY) {
+    if (!isDragging || initialAngle === null) return;
+
+    const rect = pizza.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    const currentAngle = getAngle(cx, cy, clientX, clientY);
+    const rotation = currentAngle - initialAngle;
+
+    accumulatedRotation += rotation;
+    pizza.style.transform = `rotate(${accumulatedRotation}deg)`;
+
+    if (Math.abs(accumulatedRotation - lastAngle) >= 60) {
+        const direction = accumulatedRotation > lastAngle ? 1 : -1;
+        counter = Math.max(1, counter + direction);
+        counterElem.innerHTML = counter;
+        lastAngle = accumulatedRotation;
+    }
+
+    initialAngle = currentAngle;
+}
+
+function stopRotation() {
+    isDragging = false;
+    initialAngle = null;
+}
+
+// Eventi Touch
+pizza.addEventListener('touchstart', (e) => {
+    startRotation(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+pizza.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    updateRotation(e.touches[0].clientX, e.touches[0].clientY);
+});
+
+pizza.addEventListener('touchend', stopRotation);
+
+// Eventi Mouse
+pizza.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    startRotation(e.clientX, e.clientY);
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        e.preventDefault();
+        updateRotation(e.clientX, e.clientY);
+    }
+});
+
+window.addEventListener('mouseup', stopRotation);
+
+function getWeightPerPanetto() {
+    return parseFloat(weightSelect.value);
+}
+
+// Calcoli basati su % per Caputo Nuvola (Veloci 3h)
+function impasto(panetti) { return panetti * getWeightPerPanetto(); }
+function farina(panetti) { return (56.49 * panetti * getWeightPerPanetto()) / 100; }
+function acqua(panetti) { return (39.55 * panetti * getWeightPerPanetto()) / 100; }
+function sale(panetti) { return (1.50 * panetti * getWeightPerPanetto()) / 100; }
+function olio(panetti) { return (0.94 * panetti * getWeightPerPanetto()) / 100; }
+function lievito(panetti) { return (1.52 * panetti * getWeightPerPanetto()) / 100; }
+
+button.addEventListener('click', () => {
+    const panetti = counter;
+    const singleWeight = getWeightPerPanetto();
+    
+    modalTitle.innerHTML = `TOTALE IMPASTO: ${impasto(panetti)} gr`;
+    
+    modalList.innerHTML = `
+        <li><span>Panetti:</span> <strong>${panetti} da ${singleWeight}g</strong></li>
+        <li><span>Farina Nuvola:</span> <strong>${Math.round(farina(panetti))} gr</strong></li>
+        <li><span>Acqua:</span> <strong>${Math.round(acqua(panetti))} gr</strong></li>
+        <li><span>Lievito Fresco:</span> <strong>${lievito(panetti).toFixed(1)} gr</strong></li>
+        <li><span>Sale:</span> <strong>${Math.round(sale(panetti))} gr</strong></li>
+        <li><span>Olio:</span> <strong>${Math.round(olio(panetti))} gr</strong></li>
+    `;
+
+    modal.style.display = 'flex';
+});
+
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+function resetCounter() {
+    counter = 2;
+    accumulatedRotation = 0;
+    lastAngle = 0;
+    pizza.style.transition = 'transform 0.5s ease-in-out';
+    pizza.style.transform = `rotate(-720deg)`;
+    setTimeout(() => {
+        pizza.style.transition = '';
+        pizza.style.transform = 'rotate(0deg)';
+    }, 500);
+    counterElem.innerHTML = counter;
+}
+</script>
+</body>
+</html>

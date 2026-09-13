@@ -1,311 +1,729 @@
 <!DOCTYPE html>
-<html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Tool</title>
-    <meta name="description" content="Calcola rapidamente l'impasto per la tua pizza ruotando la pizza virtuale.">
-    <!-- Open Graph per Facebook e WhatsApp -->
-    <meta property="og:title" content="Pizza Tool - Calcola Impasto Pizza">
-    <meta property="og:description" content="Ruota la pizza virtuale e scopri immediatamente le quantità perfette per l'impasto della tua pizza fatta in casa.">
-    <meta property="og:image" content="pizza.png">
-    <meta property="og:type" content="website">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pizza</title>
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Pizza Tool - Calcola Impasto Pizza">
-    <meta name="twitter:description" content="Ruota la pizza e calcola rapidamente gli ingredienti necessari per una pizza perfetta.">
-    <meta name="twitter:image" content="pizza.png">
-
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pizza">
+    <link rel="apple-touch-icon" href="pizza.png">
     
-    <link rel="icon" href="pizza.png">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="pizza.png">
 
 <style>
-/* Stili generali puliti senza forzare overflow e border-radius ovunque */
+:root {
+    --ios-orange: #FF9500;
+    --ios-bg: #F2F2F7;
+    --ios-card-bg: #FFFFFF;
+    --ios-nav-bg: rgba(249, 249, 249, 0.85);
+    --ios-separator: rgba(60, 60, 67, 0.15);
+    --ios-text: #000000;
+    --ios-text-secondary: #8E8E93;
+    --ios-gray-light: #E5E5EA;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
 body {
-    font-family: system-ui;
-    background-image: url("back.png");
-    background-color: #b99b69;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
+    background-color: var(--ios-bg);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--ios-text);
+}
+
+/* iOS Navigation Header */
+.ios-nav {
+    height: 44px;
+    padding-top: env(safe-area-inset-top);
+    background: var(--ios-nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid var(--ios-separator);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.ios-nav-title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+}
+
+/* Area di scroll principale */
+.ios-viewport {
+    flex: 1;
+    margin-top: calc(44px + env(safe-area-inset-top));
+    margin-bottom: calc(56px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* Empty State */
+.empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-bottom: 30px;
-    margin: 0;
-    min-height: 100vh;
     text-align: center;
-}
-
-h1 {
-    color: rgba(221, 239, 255, 0.9);
-    border: solid 3px;
-    background-color: rgba(97, 18, 14, 0.5);
-    box-shadow: 2px 2px 50px;
-    padding: 20px;
-    border-radius: 30px;
-    text-align: center;
-}
-
-h3 {
-    text-align: center;
-}
-
-.num {
-    color: maroon;
-    font-size: 80px;
-    margin-top: -10px;
-    margin-bottom: -20px;
-    text-align: center;
-}
-
-.weight-selector {
-    margin: 10px 0 20px 0;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
-    border-radius: 30px;
-}
-
-.weight-selector label {
-    font-weight: bold;
-    color: maroon;
-    font-size: 16px;
-}
-
-.weight-selector select {
-    font-size: 16px;
-    padding: 5px 10px;
-    border-radius: 15px;
-    border: 2px solid maroon;
-    background-color: white;
-    color: maroon;
-    cursor: pointer;
-}
-
-button {
-    margin-top: 30px;
-    padding: 20px;
-    border: solid 3px;
-    background-color: #ECA442;
-    font-size: 20px;
-    color: white;
-    box-shadow: 2px 2px 20px;
-    cursor: pointer;
-    border-radius: 30px;
-}
-
-.pizza {
-    width: 250px;
-    transform-origin: center;
-}
-
-/* Stili per il Modale */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: #2b2b2b;
-    color: white;
-    padding: 25px 30px;
-    width: 85%;
-    max-width: 380px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    border: solid 3px #ECA442;
-    border-radius: 20px;
-    text-align: left;
-}
-
-.modal-content h3 {
-    color: #ECA442;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 20px;
-    text-align: center;
-}
-
-.modal-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px 0;
-}
-
-.modal-content li {
-    padding: 8px 0;
+    height: 60vh;
+    color: var(--ios-text-secondary);
     font-size: 17px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 20px;
+}
+
+/* Sezioni iOS Grouped */
+.ios-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.ios-section-title {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ios-text-secondary);
+    text-transform: uppercase;
+    padding-left: 16px;
+    letter-spacing: -0.1px;
+}
+
+.ios-group {
+    background: var(--ios-card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ios-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    font-size: 17px;
+    border-bottom: 0.5px solid var(--ios-separator);
+    min-height: 48px;
 }
 
-.modal-content li:last-child {
+.ios-row:last-child {
     border-bottom: none;
 }
 
-.modal-close-btn {
-    display: block;
-    width: 100%;
-    background-color: #ECA442;
+.ios-row-val {
+    font-weight: 600;
+    color: var(--ios-orange);
+}
+
+/* Segmented Control iOS - Adattato per 5 elementi */
+.ios-segmented {
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 9px;
+    padding: 3px;
+    display: flex;
+    margin: 12px 16px;
+}
+
+.ios-segmented button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 9px 0;
+    font-size: 13px; /* Leggermente ridotto per far entrare 5 elementi */
+    font-weight: 500;
+    color: var(--ios-text);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ios-segmented button.active {
+    background: #FFFFFF;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
+    font-weight: 600;
+}
+
+/* Dial della Pizza */
+.dial-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0;
+    background: var(--ios-card-bg);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.counter-value {
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+}
+
+.counter-unit {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--ios-text-secondary);
+    font-weight: 600;
+    margin-top: 4px;
+    margin-bottom: 24px;
+}
+
+.pizza-wheel {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    touch-action: none;
+    cursor: grab;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    transition: transform 0.05s linear;
+}
+
+.pizza-wheel:active {
+    cursor: grabbing;
+}
+
+/* Input Range */
+input[type="range"] {
+    width: 120px;
+    accent-color: var(--ios-orange);
+    height: 6px;
+    background-color: var(--ios-gray-light);
+    border-radius: 4px;
+}
+
+/* Bottoni iOS */
+.ios-btn {
+    background: var(--ios-orange);
     color: white;
     border: none;
-    padding: 12px;
-    font-size: 18px;
-    font-weight: bold;
+    border-radius: 14px;
+    height: 52px;
+    font-size: 17px;
+    font-weight: 600;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    margin-top: 10px;
-    box-shadow: none;
-    border-radius: 15px;
-    text-align: center;
+    transition: opacity 0.15s;
+    margin-top: 8px;
+}
+
+.ios-btn:active {
+    opacity: 0.7;
+}
+
+/* Bottom Navigation Bar */
+.ios-tabbar {
+    height: calc(56px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--ios-nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--ios-separator);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    z-index: 100;
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--ios-text-secondary);
+    background: none;
+    border: none;
+    padding: 4px 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--ios-orange);
+}
+
+.tab-btn svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+    margin-bottom: 2px;
+}
+
+.tab-btn span {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* Expander Panels per Cronologia (CRUD) */
+.history-item {
+    margin-bottom: 12px;
+}
+
+.expander-header {
+    cursor: pointer;
+}
+
+.chevron {
+    transition: transform 0.2s ease;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.expander-content {
+    display: none;
+    background: #FAFAFA;
+    border-top: 0.5px solid var(--ios-separator);
+    padding: 0 0 16px 0;
+}
+
+.expander-content.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.inner-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 16px;
+    font-size: 15px;
+    border-bottom: 0.5px solid var(--ios-separator);
+}
+
+.crud-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 16px 0 16px;
+}
+
+.crud-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background: var(--ios-gray-light);
+    color: var(--ios-text);
+}
+
+.btn-delete {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 </style>
 </head>
-
 <body>
-    <h1>Ruota la pizza e calcola</h1>
-    
-    <div class="weight-selector">
-        <label for="panettoWeight">Peso panetto:</label>
-        <select id="panettoWeight">
-            <option value="150">150 gr</option>
-            <option value="180">180 gr</option>
-            <option value="200">200 gr</option>
-            <option value="250" selected>250 gr</option>
-        </select>
-    </div>
 
-    <h2 id="counter" class="num">2</h2>
-    <h3>PANETTI</h3>
+    <header class="ios-nav">
+        <div class="ios-nav-title" id="navTitle">Calcolatore</div>
+    </header>
 
-    <img class="pizza" src="pizza.png">
-   
-    <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-        <button class="reset-button" onclick="resetCounter()">⟳</button>
-        <button id="button"><strong>Calcola</strong></button>
-    </div>
+    <main class="ios-viewport">
 
-    <!-- Schermata Modale -->
-    <div id="resultModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="modalTitle">Risultato Impasto</h3>
-            <ul id="modalList">
-                <!-- Verrà popolato da JS -->
-            </ul>
-            <button class="modal-close-btn" onclick="closeModal()">Chiudi</button>
-        </div>
-    </div>
+        <!-- TAB 1: CALCOLATORE -->
+        <section id="tab-calc" class="screen active">
+            <div class="ios-section">
+                <div class="ios-section-title">Peso Panetto</div>
+                <div class="ios-group">
+                    <!-- Segmented Control aggiornato a 5 elementi -->
+                    <div class="ios-segmented">
+                        <button class="w-btn" onclick="setWeight(200, this)">200g</button>
+                        <button class="w-btn" onclick="setWeight(230, this)">230g</button>
+                        <button class="w-btn active" onclick="setWeight(250, this)">250g</button>
+                        <button class="w-btn" onclick="setWeight(280, this)">280g</button>
+                        <button class="w-btn" onclick="setWeight(300, this)">300g</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ios-section">
+                <div class="ios-section-title">Quantità Panetti</div>
+                <div class="dial-box">
+                    <div class="counter-value" id="panettiCount">2</div>
+                    <div class="counter-unit">Ruota per modificare</div>
+                    <img src="pizza.png" id="pizzaWheel" class="pizza-wheel" alt="Ruota Pizza" draggable="false">
+                </div>
+            </div>
+
+            <div class="ios-section">
+                <div class="ios-section-title">Parametri Impasto</div>
+                <div class="ios-group">
+                    <div class="ios-row">
+                        <span>Idratazione</span>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <input type="range" id="hydraRange" min="50" max="80" value="65" oninput="updateHydration(this.value)">
+                            <span id="hydraVal" style="font-weight:600; width: 44px; text-align:right;">65%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="ios-btn" onclick="calculateAndGo()">Calcola Impasto</button>
+        </section>
+
+        <!-- TAB 2: DOSI E RICETTA -->
+        <section id="tab-recipe" class="screen">
+            <!-- Mostrato se non c'è nulla di calcolato -->
+            <div id="emptyRecipeState" class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Nessun impasto calcolato.<br>Usa il calcolatore per iniziare.
+            </div>
+
+            <!-- Mostrato dopo aver premuto "Calcola Impasto" -->
+            <div id="activeRecipeContent" style="display:none; width: 100%; flex-direction: column; gap: 24px;">
+                <div class="ios-section">
+                    <div class="ios-section-title" id="recipeSubtitle"></div>
+                    <div class="ios-group" id="recipeList">
+                        <!-- Popolato via JS -->
+                    </div>
+                </div>
+                <button class="ios-btn" style="background: #34C759;" onclick="saveRecipe()">Salva in Cronologia</button>
+            </div>
+        </section>
+
+        <!-- TAB 3: CRONOLOGIA -->
+        <section id="tab-history" class="screen">
+            <div class="ios-section" style="width: 100%;">
+                <div class="ios-section-title">Ricette Salvate</div>
+                <div id="historyList">
+                    <!-- Popolato via JS con Expander Panels -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Tab Bar aggiornata coi data-target -->
+    <nav class="ios-tabbar">
+        <button class="tab-btn active" data-target="calc" onclick="switchTab('calc', 'Calcolatore')">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+            <span>Calcola</span>
+        </button>
+        <button class="tab-btn" data-target="recipe" onclick="switchTab('recipe', 'Ricetta')">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            <span>Dosi</span>
+        </button>
+        <button class="tab-btn" data-target="history" onclick="switchTab('history', 'Cronologia')">
+            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1L4.89 16.89 8.78 13H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 20.99 10.51 22 13 22c5.52 0 10-4.48 10-10S18.52 3 13 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            <span>Cronologia</span>
+        </button>
+    </nav>
 
 <script>
-const pizza = document.querySelector('.pizza');
-const counterElem = document.querySelector('#counter');
-const weightSelect = document.querySelector('#panettoWeight');
-const modal = document.querySelector('#resultModal');
-const modalTitle = document.querySelector('#modalTitle');
-const modalList = document.querySelector('#modalList');
-
-let counter = 2;
-let initialAngle = null;
-let lastAngle = 0;
-let accumulatedRotation = 0;
-
-const getAngle = (cx, cy, ex, ey) => Math.atan2(ey - cy, ex - cx) * (180 / Math.PI);
-
-pizza.addEventListener('touchstart', (event) => {
-    const rect = pizza.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const touch = event.touches[0];
-    initialAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
-});
-
-pizza.addEventListener('touchmove', (event) => {
-    event.preventDefault();
-
-    const rect = pizza.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const touch = event.touches[0];
-
-    const currentAngle = getAngle(cx, cy, touch.clientX, touch.clientY);
-    const rotation = currentAngle - initialAngle;
-
-    accumulatedRotation += rotation;
-    pizza.style.transform = `rotate(${accumulatedRotation}deg)`;
-
-    if (Math.abs(accumulatedRotation - lastAngle) >= 60) {
-        const direction = accumulatedRotation > lastAngle ? 1 : -1;
-        counter = Math.max(1, counter + direction);
-        counterElem.innerHTML = counter;
-        lastAngle = accumulatedRotation;
-    }
-
-    initialAngle = currentAngle;
-});
-
-function getWeightPerPanetto() {
-    return parseFloat(weightSelect.value);
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrato con successo!', reg.scope))
+            .catch(err => console.log('Registrazione Service Worker fallita:', err));
+    });
 }
 
-function impasto(panetti) { return panetti * getWeightPerPanetto(); }
-function farina(panetti) { return (57 * panetti * getWeightPerPanetto()) / 100; }
-function acqua(panetti) { return (39.69 * panetti * getWeightPerPanetto()) / 100; }
-function sale(panetti) { return (1.7 * panetti * getWeightPerPanetto()) / 100; }
-function olio(panetti) { return (1.5 * panetti * getWeightPerPanetto()) / 100; }
-function lievito(panetti) { return (0.11 * panetti * getWeightPerPanetto()) / 100; }
+let state = {
+    panetti: 2,
+    weight: 250,
+    hydration: 65,
+    rotation: 0
+};
 
-button.addEventListener('click', () => {
-    const panetti = counter;
-    const singleWeight = getWeightPerPanetto();
+// Variabile per memorizzare temporaneamente il calcolo prima di salvarlo
+let currentCalculation = null;
+
+// Funzione di navigazione schede
+function switchTab(tabId, title) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        if(b.dataset.target === tabId) b.classList.add('active');
+    });
     
-    modalTitle.innerHTML = `TOTALE IMPASTO: ${impasto(panetti)} gr`;
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+    document.getElementById('navTitle').innerText = title;
+
+    if (tabId === 'history') renderHistory();
+}
+
+function setWeight(val, btn) {
+    state.weight = val;
+    document.querySelectorAll('.w-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    triggerHaptic();
+}
+
+function updateHydration(val) {
+    state.hydration = parseInt(val);
+    document.getElementById('hydraVal').innerText = `${val}%`;
+}
+
+/* Logica Rotazione */
+const wheel = document.getElementById('pizzaWheel');
+let startAngle = 0;
+let isDragging = false;
+let accumulatedAngle = 0;
+
+function getAngle(cx, cy, ex, ey) {
+    return Math.atan2(ey - cy, ex - cx) * (180 / Math.PI);
+}
+
+function handleStart(e) {
+    isDragging = true;
+    const rect = wheel.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    startAngle = getAngle(rect.left + rect.width/2, rect.top + rect.height/2, touch.clientX, touch.clientY);
+}
+
+function handleMove(e) {
+    if (!isDragging) return;
+    const rect = wheel.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    const currentAngle = getAngle(rect.left + rect.width/2, rect.top + rect.height/2, touch.clientX, touch.clientY);
     
-    modalList.innerHTML = `
-        <li><span>Panetti:</span> <strong>${panetti} da ${singleWeight}g</strong></li>
-        <li><span>Farina:</span> <strong>${Math.floor(farina(panetti))} gr</strong></li>
-        <li><span>Acqua:</span> <strong>${Math.floor(acqua(panetti))} gr</strong></li>
-        <li><span>Sale:</span> <strong>${Math.floor(sale(panetti))} gr</strong></li>
-        <li><span>Olio:</span> <strong>${Math.floor(olio(panetti))} gr</strong></li>
-        <li><span>Lievito:</span> <strong>${lievito(panetti).toFixed(3)} gr</strong></li>
+    let diff = currentAngle - startAngle;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    accumulatedAngle += diff;
+    state.rotation += diff;
+    wheel.style.transform = `rotate(${state.rotation}deg)`;
+
+    if (Math.abs(accumulatedAngle) >= 45) {
+        if (accumulatedAngle > 0) state.panetti++;
+        else if (state.panetti > 1) state.panetti--;
+
+        document.getElementById('panettiCount').innerText = state.panetti;
+        triggerHaptic();
+        accumulatedAngle = 0;
+    }
+
+    startAngle = currentAngle;
+}
+
+function handleEnd() { isDragging = false; }
+
+wheel.addEventListener('touchstart', handleStart, {passive: true});
+wheel.addEventListener('touchmove', handleMove, {passive: true});
+wheel.addEventListener('touchend', handleEnd);
+wheel.addEventListener('mousedown', handleStart);
+window.addEventListener('mousemove', handleMove);
+window.addEventListener('mouseup', handleEnd);
+
+// Calcolo Panetti (Formula del Pizzaiolo basata sulla farina al 100%)
+function getCalculatedData() {
+    const totalWeight = state.panetti * state.weight;
+    
+    // Percentuali
+    const percWater = state.hydration / 100;
+    const percSalt = 0.025;  // 2.5% sale sulla farina
+    const percOil = 0.025;   // 2.5% olio sulla farina
+    const percYeast = 0.005; // 0.5% lievito fresco (5g per 1Kg di farina)
+    
+    const sumPerc = 1 + percWater + percSalt + percOil + percYeast;
+    
+    const flour = Math.round(totalWeight / sumPerc);
+    const water = Math.round(flour * percWater);
+    const salt = Math.round(flour * percSalt);
+    const oil = Math.round(flour * percOil);
+    const yeast = (flour * percYeast).toFixed(1); // Manteniamo un decimale per precisione
+
+    return { totalWeight, flour, water, salt, oil, yeast };
+}
+
+// Azione "Calcola Impasto"
+function calculateAndGo() {
+    const data = getCalculatedData();
+    
+    // Salvo nello stato temporaneo
+    currentCalculation = {
+        panetti: state.panetti,
+        weight: state.weight,
+        hydration: state.hydration,
+        flour: data.flour,
+        water: data.water,
+        salt: data.salt,
+        oil: data.oil,
+        yeast: data.yeast,
+        total: data.totalWeight
+    };
+
+    // Popola UI Tab 2
+    document.getElementById('recipeSubtitle').innerText = `PER ${state.panetti} PANETTI DA ${state.weight}G (${state.hydration}%)`;
+    document.getElementById('recipeList').innerHTML = `
+        <div class="ios-row"><span>Farina</span><span class="ios-row-val">${data.flour} g</span></div>
+        <div class="ios-row"><span>Acqua</span><span class="ios-row-val">${data.water} g</span></div>
+        <div class="ios-row"><span>Olio Evo</span><span class="ios-row-val">${data.oil} g</span></div>
+        <div class="ios-row"><span>Sale</span><span class="ios-row-val">${data.salt} g</span></div>
+        <div class="ios-row"><span>Lievito Fresco</span><span class="ios-row-val">${data.yeast} g</span></div>
     `;
 
-    modal.style.display = 'flex';
-});
+    // Nasconde lo stato vuoto e mostra le dosi
+    document.getElementById('emptyRecipeState').style.display = 'none';
+    document.getElementById('activeRecipeContent').style.display = 'flex';
 
-function closeModal() {
-    modal.style.display = 'none';
+    // Cambia scheda automaticamente
+    switchTab('recipe', 'Ricetta');
 }
 
-// Chiudi il modale cliccando fuori dalla finestrella
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        closeModal();
-    }
-});
+// ==========================================
+// CRUD OPERATIONS (Cronologia)
+// ==========================================
 
-function resetCounter() {
-    counter = 2;
-    accumulatedRotation = 0;
-    lastAngle = 0;
-    pizza.style.transition = 'transform 0.5s ease-in-out';
-    pizza.style.transform = `rotate(-720deg)`;
-    setTimeout(() => {
-        pizza.style.transition = '';
-        pizza.style.transform = 'rotate(0deg)';
-    }, 500);
-    counterElem.innerHTML = counter;
+// CREATE
+function saveRecipe() {
+    if(!currentCalculation) return;
+
+    const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
+    
+    const defaultName = `Impasto del ${new Date().toLocaleDateString('it-IT')}`;
+    
+    const newItem = {
+        id: Date.now(),
+        name: defaultName,
+        date: new Date().toLocaleDateString('it-IT'),
+        ...currentCalculation
+    };
+    
+    history.unshift(newItem);
+    localStorage.setItem('pizza_history', JSON.stringify(history));
+    
+    // Resetto la schermata dosi e vado alla cronologia
+    document.getElementById('emptyRecipeState').style.display = 'flex';
+    document.getElementById('activeRecipeContent').style.display = 'none';
+    currentCalculation = null;
+
+    switchTab('history', 'Cronologia');
+}
+
+// READ
+function renderHistory() {
+    const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
+    const container = document.getElementById('historyList');
+    
+    if (history.length === 0) {
+        container.innerHTML = `
+            <div class="ios-group">
+                <div class="ios-row"><span style="color:var(--ios-text-secondary)">Nessun salvataggio presente</span></div>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = history.map(h => `
+        <div class="ios-group history-item">
+            <div class="ios-row expander-header" onclick="toggleExpander(${h.id})">
+                <div>
+                    <strong>${h.name}</strong>
+                    <div style="font-size:12px; color:var(--ios-text-secondary); margin-top: 4px;">${h.panetti}x ${h.weight}g - Idratazione ${h.hydration}%</div>
+                </div>
+                <svg class="chevron" id="chevron-${h.id}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ios-text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9l6 6 6-6"/>
+                </svg>
+            </div>
+            
+            <div class="expander-content" id="content-${h.id}">
+                <div class="inner-row"><span>Farina</span><span class="ios-row-val">${h.flour} g</span></div>
+                <div class="inner-row"><span>Acqua</span><span class="ios-row-val">${h.water} g</span></div>
+                <div class="inner-row"><span>Olio Evo</span><span class="ios-row-val">${h.oil} g</span></div>
+                <div class="inner-row"><span>Sale</span><span class="ios-row-val">${h.salt} g</span></div>
+                <div class="inner-row" style="border-bottom:none;"><span>Lievito Fresco</span><span class="ios-row-val">${h.yeast} g</span></div>
+                
+                <div class="crud-actions">
+                    <button class="crud-btn btn-edit" onclick="renameRecipe(${h.id}, event)">Rinomina</button>
+                    <button class="crud-btn btn-delete" onclick="deleteRecipe(${h.id}, event)">Elimina</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// UPDATE
+function renameRecipe(id, event) {
+    event.stopPropagation();
+    const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
+    const index = history.findIndex(h => h.id === id);
+    
+    if (index !== -1) {
+        const newName = prompt("Inserisci il nuovo nome per l'impasto:", history[index].name);
+        if (newName && newName.trim() !== "") {
+            history[index].name = newName.trim();
+            localStorage.setItem('pizza_history', JSON.stringify(history));
+            renderHistory();
+            document.getElementById(`content-${id}`).classList.add('open');
+            document.getElementById(`chevron-${id}`).classList.add('open');
+        }
+    }
+}
+
+// DELETE
+function deleteRecipe(id, event) {
+    event.stopPropagation();
+    if(confirm("Sei sicuro di voler eliminare questo impasto dalla cronologia?")) {
+        let history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
+        history = history.filter(h => h.id !== id);
+        localStorage.setItem('pizza_history', JSON.stringify(history));
+        renderHistory();
+    }
+}
+
+// Funzione di utilità UI per gli Expander
+function toggleExpander(id) {
+    const content = document.getElementById(`content-${id}`);
+    const chevron = document.getElementById(`chevron-${id}`);
+    
+    content.classList.toggle('open');
+    chevron.classList.toggle('open');
+    triggerHaptic();
+}
+
+function triggerHaptic() {
+    if (navigator.vibrate) navigator.vibrate(10);
 }
 </script>
 </body>
