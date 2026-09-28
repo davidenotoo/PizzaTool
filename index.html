@@ -45,7 +45,7 @@ body {
 
 /* iOS Navigation Header */
 .ios-nav {
-    height: 44px;
+    height: 40px;
     padding-top: env(safe-area-inset-top);
     background: var(--ios-nav-bg);
     backdrop-filter: blur(20px);
@@ -61,7 +61,7 @@ body {
 }
 
 .ios-nav-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: -0.4px;
 }
@@ -69,11 +69,11 @@ body {
 /* Area di scroll principale */
 .ios-viewport {
     flex: 1;
-    margin-top: calc(44px + env(safe-area-inset-top));
-    margin-bottom: calc(56px + env(safe-area-inset-bottom));
+    margin-top: calc(40px + env(safe-area-inset-top));
+    margin-bottom: calc(50px + env(safe-area-inset-bottom));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 20px 16px;
+    padding: 10px 12px;
     display: flex;
     justify-content: center;
 }
@@ -81,9 +81,9 @@ body {
 .screen {
     display: none;
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
 }
 
 .screen.active {
@@ -97,44 +97,44 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 60vh;
+    height: 50vh;
     color: var(--ios-text-secondary);
-    font-size: 17px;
-    padding: 0 20px;
+    font-size: 15px;
+    padding: 0 16px;
 }
 
 /* Sezioni iOS Grouped */
 .ios-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     width: 100%;
 }
 
 .ios-section-title {
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 11px;
+    font-weight: 500;
     color: var(--ios-text-secondary);
     text-transform: uppercase;
-    padding-left: 16px;
+    padding-left: 12px;
     letter-spacing: -0.1px;
 }
 
 .ios-group {
     background: var(--ios-card-bg);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .ios-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 16px;
-    font-size: 17px;
+    padding: 8px 12px;
+    font-size: 15px;
     border-bottom: 0.5px solid var(--ios-separator);
-    min-height: 48px;
+    min-height: 38px;
 }
 
 .ios-row:last-child {
@@ -146,31 +146,31 @@ body {
     color: var(--ios-orange);
 }
 
-/* Segmented Control iOS - Adattato per 5 elementi */
+/* Segmented Control iOS */
 .ios-segmented {
     background: rgba(118, 118, 128, 0.12);
-    border-radius: 9px;
-    padding: 3px;
+    border-radius: 8px;
+    padding: 2px;
     display: flex;
-    margin: 12px 16px;
+    margin: 6px 8px;
 }
 
 .ios-segmented button {
     flex: 1;
     border: none;
     background: transparent;
-    padding: 9px 0;
-    font-size: 13px;
+    padding: 6px 0;
+    font-size: 12px;
     font-weight: 500;
     color: var(--ios-text);
-    border-radius: 7px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .ios-segmented button.active {
     background: #FFFFFF;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     font-weight: 600;
 }
 
@@ -180,36 +180,36 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px 0;
+    padding: 10px 0;
     background: var(--ios-card-bg);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .counter-value {
-    font-size: 72px;
+    font-size: 48px;
     font-weight: 800;
-    letter-spacing: -2px;
+    letter-spacing: -1.5px;
     line-height: 1;
 }
 
 .counter-unit {
-    font-size: 12px;
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     color: var(--ios-text-secondary);
     font-weight: 600;
-    margin-top: 4px;
-    margin-bottom: 24px;
+    margin-top: 2px;
+    margin-bottom: 10px;
 }
 
 .pizza-wheel {
-    width: 200px;
-    height: 200px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     touch-action: none;
     cursor: grab;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
     transition: transform 0.05s linear;
 }
 
@@ -219,9 +219,9 @@ body {
 
 /* Input Range */
 input[type="range"] {
-    width: 120px;
+    width: 110px;
     accent-color: var(--ios-orange);
-    height: 6px;
+    height: 5px;
     background-color: var(--ios-gray-light);
     border-radius: 4px;
 }
@@ -231,9 +231,9 @@ input[type="range"] {
     background: var(--ios-orange);
     color: white;
     border: none;
-    border-radius: 14px;
-    height: 52px;
-    font-size: 17px;
+    border-radius: 12px;
+    height: 44px;
+    font-size: 15px;
     font-weight: 600;
     width: 100%;
     display: flex;
@@ -241,7 +241,7 @@ input[type="range"] {
     justify-content: center;
     cursor: pointer;
     transition: opacity 0.15s;
-    margin-top: 8px;
+    margin-top: 2px;
 }
 
 .ios-btn:active {
@@ -250,7 +250,7 @@ input[type="range"] {
 
 /* Bottom Navigation Bar */
 .ios-tabbar {
-    height: calc(56px + env(safe-area-inset-bottom));
+    height: calc(50px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     background: var(--ios-nav-bg);
     backdrop-filter: blur(20px);
@@ -272,7 +272,7 @@ input[type="range"] {
     color: var(--ios-text-secondary);
     background: none;
     border: none;
-    padding: 4px 0;
+    padding: 2px 0;
     cursor: pointer;
     transition: color 0.2s;
 }
@@ -282,10 +282,10 @@ input[type="range"] {
 }
 
 .tab-btn svg {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     fill: currentColor;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .tab-btn span {
@@ -295,7 +295,7 @@ input[type="range"] {
 
 /* Expander Panels per Cronologia (CRUD) */
 .history-item {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .expander-header {
@@ -314,7 +314,7 @@ input[type="range"] {
     display: none;
     background: #FAFAFA;
     border-top: 0.5px solid var(--ios-separator);
-    padding: 0 0 16px 0;
+    padding: 0 0 10px 0;
 }
 
 .expander-content.open {
@@ -325,23 +325,23 @@ input[type="range"] {
 .inner-row {
     display: flex;
     justify-content: space-between;
-    padding: 10px 16px;
-    font-size: 15px;
+    padding: 8px 12px;
+    font-size: 14px;
     border-bottom: 0.5px solid var(--ios-separator);
 }
 
 .crud-actions {
     display: flex;
-    gap: 12px;
-    padding: 16px 16px 0 16px;
+    gap: 8px;
+    padding: 10px 12px 0 12px;
 }
 
 .crud-btn {
     flex: 1;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 8px;
+    border-radius: 6px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
     border: none;
     cursor: pointer;
 }
@@ -374,7 +374,6 @@ input[type="range"] {
         <section id="tab-calc" class="screen active">
             <div class="ios-section">
                 <div class="ios-group">
-                    <!-- Segmented Control aggiornato a 5 elementi -->
                     <div class="ios-segmented">
                         <button class="w-btn" onclick="setWeight(200, this)">200g</button>
                         <button class="w-btn" onclick="setWeight(230, this)">230g</button>
@@ -397,16 +396,16 @@ input[type="range"] {
                 <div class="ios-group">
                     <div class="ios-row">
                         <span>Idratazione</span>
-                        <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <input type="range" id="hydraRange" min="50" max="80" value="65" oninput="updateHydration(this.value)">
-                            <span id="hydraVal" style="font-weight:600; width: 44px; text-align:right;">65%</span>
+                            <span id="hydraVal" style="font-weight:600; width: 36px; text-align:right;">65%</span>
                         </div>
                     </div>
                     <div class="ios-row">
                         <span>Ore Lievitazione</span>
-                        <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
                             <input type="range" id="hoursRange" min="2" max="48" value="8" step="0.5" oninput="updateHours(this.value)">
-                            <span id="hoursVal" style="font-weight:600; width: 44px; text-align:right;">8 h</span>
+                            <span id="hoursVal" style="font-weight:600; width: 36px; text-align:right;">8</span>
                         </div>
                     </div>
                 </div>
@@ -417,14 +416,12 @@ input[type="range"] {
 
         <!-- TAB 2: DOSI E RICETTA -->
         <section id="tab-recipe" class="screen">
-            <!-- Mostrato se non c'è nulla di calcolato -->
             <div id="emptyRecipeState" class="empty-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; opacity: 0.5;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 Nessun impasto calcolato.<br>Usa il calcolatore per iniziare.
             </div>
 
-            <!-- Mostrato dopo aver premuto "Calcola Impasto" -->
-            <div id="activeRecipeContent" style="display:none; width: 100%; flex-direction: column; gap: 24px;">
+            <div id="activeRecipeContent" style="display:none; width: 100%; flex-direction: column; gap: 12px;">
                 <div class="ios-section">
                     <div class="ios-section-title" id="recipeSubtitle"></div>
                     <div class="ios-group" id="recipeList">
@@ -447,7 +444,6 @@ input[type="range"] {
 
     </main>
 
-    <!-- Bottom Tab Bar aggiornata coi data-target -->
     <nav class="ios-tabbar">
         <button class="tab-btn active" data-target="calc" onclick="switchTab('calc', 'Calcolatore')">
             <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
@@ -480,10 +476,8 @@ let state = {
     rotation: 0
 };
 
-// Variabile per memorizzare temporaneamente il calcolo prima di salvarlo
 let currentCalculation = null;
 
-// Funzione di navigazione schede
 function switchTab(tabId, title) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => {
@@ -511,7 +505,7 @@ function updateHydration(val) {
 
 function updateHours(val) {
     state.hours = parseFloat(val);
-    document.getElementById('hoursVal').innerText = `${val} h`;
+    document.getElementById('hoursVal').innerText = `${val}`;
 }
 
 /* Logica Rotazione */
@@ -566,16 +560,13 @@ wheel.addEventListener('mousedown', handleStart);
 window.addEventListener('mousemove', handleMove);
 window.addEventListener('mouseup', handleEnd);
 
-// Calcolo Panetti (Formula del Pizzaiolo basata sulla farina al 100%)
 function getCalculatedData() {
     const totalWeight = state.panetti * state.weight;
     
-    // Percentuali
     const percWater = state.hydration / 100;
-    const percSalt = 0.025;  // 2.5% sale sulla farina
-    const percOil = 0.025;   // 2.5% olio sulla farina
+    const percSalt = 0.025;
+    const percOil = 0.025;
     
-    // Percentuale Lievito Fresco dinamica in base alle ore di lievitazione (a ~20-22°C)
     const percYeast = (2.8 / Math.pow(state.hours, 0.85)) / 100;
     
     const sumPerc = 1 + percWater + percSalt + percOil + percYeast;
@@ -584,16 +575,14 @@ function getCalculatedData() {
     const water = Math.round(flour * percWater);
     const salt = Math.round(flour * percSalt);
     const oil = Math.round(flour * percOil);
-    const yeast = (flour * percYeast).toFixed(1); // Manteniamo un decimale per precisione
+    const yeast = (flour * percYeast).toFixed(1);
 
     return { totalWeight, flour, water, salt, oil, yeast };
 }
 
-// Azione "Calcola Impasto"
 function calculateAndGo() {
     const data = getCalculatedData();
     
-    // Salvo nello stato temporaneo
     currentCalculation = {
         panetti: state.panetti,
         weight: state.weight,
@@ -607,8 +596,7 @@ function calculateAndGo() {
         total: data.totalWeight
     };
 
-    // Popola UI Tab 2
-    document.getElementById('recipeSubtitle').innerText = `PER ${state.panetti} PANETTI DA ${state.weight}G (${state.hydration}% IDR. - ${state.hours}H LIEV.)`;
+    document.getElementById('recipeSubtitle').innerText = `PER ${state.panetti} PANETTI DA ${state.weight}G (${state.hydration}% IDR. - ${state.hours} ORE)`;
     document.getElementById('recipeList').innerHTML = `
         <div class="ios-row"><span>Farina</span><span class="ios-row-val">${data.flour} g</span></div>
         <div class="ios-row"><span>Acqua</span><span class="ios-row-val">${data.water} g</span></div>
@@ -617,24 +605,16 @@ function calculateAndGo() {
         <div class="ios-row"><span>Lievito Fresco</span><span class="ios-row-val">${data.yeast} g</span></div>
     `;
 
-    // Nasconde lo stato vuoto e mostra le dosi
     document.getElementById('emptyRecipeState').style.display = 'none';
     document.getElementById('activeRecipeContent').style.display = 'flex';
 
-    // Cambia scheda automaticamente
     switchTab('recipe', 'Ricetta');
 }
 
-// ==========================================
-// CRUD OPERATIONS (Cronologia)
-// ==========================================
-
-// CREATE
 function saveRecipe() {
     if(!currentCalculation) return;
 
     const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
-    
     const defaultName = `Impasto del ${new Date().toLocaleDateString('it-IT')}`;
     
     const newItem = {
@@ -647,7 +627,6 @@ function saveRecipe() {
     history.unshift(newItem);
     localStorage.setItem('pizza_history', JSON.stringify(history));
     
-    // Resetto la schermata dosi e vado alla cronologia
     document.getElementById('emptyRecipeState').style.display = 'flex';
     document.getElementById('activeRecipeContent').style.display = 'none';
     currentCalculation = null;
@@ -655,7 +634,6 @@ function saveRecipe() {
     switchTab('history', 'Cronologia');
 }
 
-// READ
 function renderHistory() {
     const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
     const container = document.getElementById('historyList');
@@ -673,9 +651,9 @@ function renderHistory() {
             <div class="ios-row expander-header" onclick="toggleExpander(${h.id})">
                 <div>
                     <strong>${h.name}</strong>
-                    <div style="font-size:12px; color:var(--ios-text-secondary); margin-top: 4px;">${h.panetti}x ${h.weight}g - Idr. ${h.hydration}% - Liev. ${h.hours || 8}h</div>
+                    <div style="font-size:12px; color:var(--ios-text-secondary); margin-top: 2px;">${h.panetti}x ${h.weight}g - Idr. ${h.hydration}% - Ore ${h.hours || 8}</div>
                 </div>
-                <svg class="chevron" id="chevron-${h.id}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ios-text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="chevron" id="chevron-${h.id}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 9l6 6 6-6"/>
                 </svg>
             </div>
@@ -686,7 +664,7 @@ function renderHistory() {
                 <div class="inner-row"><span>Olio Evo</span><span class="ios-row-val">${h.oil} g</span></div>
                 <div class="inner-row"><span>Sale</span><span class="ios-row-val">${h.salt} g</span></div>
                 <div class="inner-row"><span>Lievito Fresco</span><span class="ios-row-val">${h.yeast} g</span></div>
-                <div class="inner-row" style="border-bottom:none;"><span>Ore Lievitazione</span><span class="ios-row-val">${h.hours || 8} h</span></div>
+                <div class="inner-row" style="border-bottom:none;"><span>Ore Lievitazione</span><span class="ios-row-val">${h.hours || 8}</span></div>
                 
                 <div class="crud-actions">
                     <button class="crud-btn btn-edit" onclick="renameRecipe(${h.id}, event)">Rinomina</button>
@@ -697,7 +675,6 @@ function renderHistory() {
     `).join('');
 }
 
-// UPDATE
 function renameRecipe(id, event) {
     event.stopPropagation();
     const history = JSON.parse(localStorage.getItem('pizza_history') || '[]');
@@ -715,7 +692,6 @@ function renameRecipe(id, event) {
     }
 }
 
-// DELETE
 function deleteRecipe(id, event) {
     event.stopPropagation();
     if(confirm("Sei sicuro di voler eliminare questo impasto dalla cronologia?")) {
@@ -726,7 +702,6 @@ function deleteRecipe(id, event) {
     }
 }
 
-// Funzione di utilità UI per gli Expander
 function toggleExpander(id) {
     const content = document.getElementById(`content-${id}`);
     const chevron = document.getElementById(`chevron-${id}`);
