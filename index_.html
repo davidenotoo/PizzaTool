@@ -160,7 +160,7 @@ body {
     border: none;
     background: transparent;
     padding: 9px 0;
-    font-size: 13px;
+    font-size: 13px; /* Leggermente ridotto per far entrare 5 elementi */
     font-weight: 500;
     color: var(--ios-text);
     border-radius: 7px;
@@ -386,6 +386,7 @@ input[type="range"] {
             </div>
 
             <div class="ios-section">
+                
                 <div class="dial-box">
                     <div class="counter-value" id="panettiCount">2</div>
                     <div class="counter-unit">Ruota per modificare</div>
@@ -394,19 +395,13 @@ input[type="range"] {
             </div>
 
             <div class="ios-section">
+                
                 <div class="ios-group">
                     <div class="ios-row">
                         <span>Idratazione</span>
                         <div style="display:flex; align-items:center; gap:12px;">
                             <input type="range" id="hydraRange" min="50" max="80" value="65" oninput="updateHydration(this.value)">
                             <span id="hydraVal" style="font-weight:600; width: 44px; text-align:right;">65%</span>
-                        </div>
-                    </div>
-                    <div class="ios-row">
-                        <span>Ore Lievitazione</span>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <input type="range" id="hoursRange" min="2" max="48" value="8" step="0.5" oninput="updateHours(this.value)">
-                            <span id="hoursVal" style="font-weight:600; width: 44px; text-align:right;">8 h</span>
                         </div>
                     </div>
                 </div>
@@ -476,7 +471,6 @@ let state = {
     panetti: 2,
     weight: 250,
     hydration: 65,
-    hours: 8,
     rotation: 0
 };
 
@@ -507,11 +501,6 @@ function setWeight(val, btn) {
 function updateHydration(val) {
     state.hydration = parseInt(val);
     document.getElementById('hydraVal').innerText = `${val}%`;
-}
-
-function updateHours(val) {
-    state.hours = parseFloat(val);
-    document.getElementById('hoursVal').innerText = `${val} h`;
 }
 
 /* Logica Rotazione */
@@ -574,9 +563,7 @@ function getCalculatedData() {
     const percWater = state.hydration / 100;
     const percSalt = 0.025;  // 2.5% sale sulla farina
     const percOil = 0.025;   // 2.5% olio sulla farina
-    
-    // Percentuale Lievito Fresco dinamica in base alle ore di lievitazione (a ~20-22°C)
-    const percYeast = (2.8 / Math.pow(state.hours, 0.85)) / 100;
+    const percYeast = 0.005; // 0.5% lievito fresco (5g per 1Kg di farina)
     
     const sumPerc = 1 + percWater + percSalt + percOil + percYeast;
     
@@ -598,7 +585,6 @@ function calculateAndGo() {
         panetti: state.panetti,
         weight: state.weight,
         hydration: state.hydration,
-        hours: state.hours,
         flour: data.flour,
         water: data.water,
         salt: data.salt,
@@ -608,7 +594,7 @@ function calculateAndGo() {
     };
 
     // Popola UI Tab 2
-    document.getElementById('recipeSubtitle').innerText = `PER ${state.panetti} PANETTI DA ${state.weight}G (${state.hydration}% IDR. - ${state.hours}H LIEV.)`;
+    document.getElementById('recipeSubtitle').innerText = `PER ${state.panetti} PANETTI DA ${state.weight}G (${state.hydration}%)`;
     document.getElementById('recipeList').innerHTML = `
         <div class="ios-row"><span>Farina</span><span class="ios-row-val">${data.flour} g</span></div>
         <div class="ios-row"><span>Acqua</span><span class="ios-row-val">${data.water} g</span></div>
@@ -673,7 +659,7 @@ function renderHistory() {
             <div class="ios-row expander-header" onclick="toggleExpander(${h.id})">
                 <div>
                     <strong>${h.name}</strong>
-                    <div style="font-size:12px; color:var(--ios-text-secondary); margin-top: 4px;">${h.panetti}x ${h.weight}g - Idr. ${h.hydration}% - Liev. ${h.hours || 8}h</div>
+                    <div style="font-size:12px; color:var(--ios-text-secondary); margin-top: 4px;">${h.panetti}x ${h.weight}g - Idratazione ${h.hydration}%</div>
                 </div>
                 <svg class="chevron" id="chevron-${h.id}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ios-text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 9l6 6 6-6"/>
@@ -685,8 +671,7 @@ function renderHistory() {
                 <div class="inner-row"><span>Acqua</span><span class="ios-row-val">${h.water} g</span></div>
                 <div class="inner-row"><span>Olio Evo</span><span class="ios-row-val">${h.oil} g</span></div>
                 <div class="inner-row"><span>Sale</span><span class="ios-row-val">${h.salt} g</span></div>
-                <div class="inner-row"><span>Lievito Fresco</span><span class="ios-row-val">${h.yeast} g</span></div>
-                <div class="inner-row" style="border-bottom:none;"><span>Ore Lievitazione</span><span class="ios-row-val">${h.hours || 8} h</span></div>
+                <div class="inner-row" style="border-bottom:none;"><span>Lievito Fresco</span><span class="ios-row-val">${h.yeast} g</span></div>
                 
                 <div class="crud-actions">
                     <button class="crud-btn btn-edit" onclick="renameRecipe(${h.id}, event)">Rinomina</button>
