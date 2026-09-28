@@ -1,46 +1,55 @@
-const CACHE_NAME = 'pizza-calc-v2';
-const urlsToCache = [
+const CACHE_NAME = 'pizza-calc-v2'; // Incrementa questo valore ad ogni modifica!
+const ASSETS_TO_CACHE = [
     './',
     './index.html',
-    './manifest.json',
     './pizza.png',
-    './favicon.png',
-    './back.png'
+    './manifest.json'
 ];
 
-// Installazione del Service Worker e salvataggio in cache delle risorse
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                return cache.addAll(urlsToCache);
-            })
-    );
+// Installazione: scarica i nuovi file e salta l'attesa
+self.addEventListener('install', (event) => {
     self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(ASSETS_TO_CACHE);
+        })
+    );
 });
 
-// Attivazione e pulizia delle vecchie cache
-self.addEventListener('activate', event => {
+// Attivazione: elimina le vecchie cache ed effettua il claim dei client
+self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then((keys) => {
             return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
-// Gestione delle richieste (Cache First con fallback sulla rete)
-self.addEventListener('fetch', event => {
+// Intercettazione richieste: Network First per l'HTML, Cache First per le immagini/risorse statiche
+self.addEventListener('fetch', (event) => {
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    return caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                })
+                .catch(() => caches.match(event.request))
+        );
+        return;
+    }
+
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
+        caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || fetch(event.request);
+        })
     );
 });
